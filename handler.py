@@ -1,28 +1,13 @@
 import runpod
-import os
-import time
-from generation import inference
-from models import InputPayload
-import json
+from text_generation import Client
 
-
-## load your model(s) into vram here
-
+client = Client("http://0.0.0.0:8080")
 
 
 def handler(event):
-    # print(event,'event')
-    # event = json.loads(event)
-    print(event["input"],'input')
-    model_input = event["input"]
-
-    # print(model_input.inputs, "model_input")
-    # model_input = json.loads(event["input"])
-    # print(model_input, "model_input")
-    input_payload = InputPayload(**model_input)
-    output = inference(input_payload)
-    print(output,'output')
+    output = client.generate("What is Deep Learning?", max_new_tokens=20).generated_text
     return output
+
 
 runpod.serverless.start({
     "handler": handler

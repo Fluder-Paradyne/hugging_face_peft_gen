@@ -1,14 +1,12 @@
-FROM python:3.11.1-buster
+FROM  ghcr.io/huggingface/text-generation-inference:latest
 
-WORKDIR /
+ADD requirements.txt .
 
-COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-ADD handler.py /handler.py
-ADD app.py /app.py
-ADD finetuned_model.py  /finetuned_model.py
-ADD generation.py  /generation.py
-ADD models.py /models.py
+ADD handler.py .
 
-ENTRYPOINT [ "python", "-u", "/handler.py" ]
+ENV model="tiiuae/falcon-7b-instruct"
+ENV volume="/data"
+
+ENTRYPOINT ["text-generation-server", "--model-id", "$model", "--volume", "$volume", "--gpu", "all","--shm-size", "1g"]
