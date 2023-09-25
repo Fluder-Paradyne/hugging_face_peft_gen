@@ -8,5 +8,8 @@ ADD handler.py .
 
 ENV model="tiiuae/falcon-7b-instruct"
 ENV volume="/data"
+ENV trust_remote_code=True
+ENV DISABLE_CUSTOM_KERNELS=true
 
-ENTRYPOINT ["text-generation-launcher", "--model-id", "$model"]
+CMD [ "--model-id", "tiiuae/falcon-7b-instruct"]
+# CMD [ "python3", "-u", "/handler.py" ]
