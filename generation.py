@@ -1,4 +1,5 @@
 from finetuned_model import FinetunedModel
+from hf_models import HfModel
 from models import InputPayload
 import os
 from transformers import BitsAndBytesConfig
@@ -7,7 +8,16 @@ import torch
 
 
 MODEL_REPO_ID = os.environ.get("MODEL_ID")
+PEFT_MODEL = bool(os.environ.get("FINETUNNED")) | False
+
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+LOAD_IN_4BIT = bool(os.environ.get("LOAD_IN_4BIT")) | False
+LOAD_IN_8BIT = bool(os.environ.get("LOAD_IN_8BIT")) | False
+
+# Edit the quantization config here
+# For more information on the quantization config, refer to huggingface documentation
+if LOAD_IN_8BIT and LOAD_IN_4BIT:
+    raise Exception("Cannot load in both 4bit and 8bit")
 
 quantization_config = BitsAndBytesConfig(
     load_in_4bit=True,
@@ -16,9 +26,26 @@ quantization_config = BitsAndBytesConfig(
     bnb_4bit_quant_type="nf4",
 )
 
-finetuned_model = FinetunedModel(
-    model_id=MODEL_REPO_ID, quantization_config=quantization_config, load_in_4bit=True
-)
+####################################
+# Using a finetuned model (using peft adapters)
+####################################
+
+if PEFT_MODEL:
+    model = FinetunedModel(
+        model_id=MODEL_REPO_ID,
+        quantization_config=quantization_config,
+        load_in_4bit=True,
+    )
+else:
+    ####################################
+    # To use a normal model (not using peft adapters), uncomment and use the following code:
+    ####################################
+    model = HfModel(
+        model_id=MODEL_REPO_ID,
+        quantization_config=quantization_config,
+        load_in_4bit=LOAD_IN_4BIT,
+        load_in_8bit=LOAD_IN_8BIT,
+    )  # Pass any other arguments to the model here
 
 
 # Some Helper functions
@@ -39,7 +66,7 @@ def process_output(llm_responses: Union[str, list[str]]):
 
 
 def inference(payload: InputPayload):
-    generated_text = finetuned_model.generate(
+    generated_text = model.generate(
         message=payload.inputs,
         max_new_tokens=payload.parameters.max_new_tokens,
         temperature=payload.parameters.temperature,
