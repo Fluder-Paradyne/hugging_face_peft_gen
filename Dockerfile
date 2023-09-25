@@ -9,4 +9,4 @@ ADD handler.py .
 ENV model="tiiuae/falcon-7b-instruct"
 ENV volume="/data"
 
-ENTRYPOINT ["text-generation-launcher", "--model-id", "$model", "--volume", "$volume", "--gpu", "all","--shm-size", "1g"]
+ENTRYPOINT ["text-generation-launcher", "--model-id", "$model"]
