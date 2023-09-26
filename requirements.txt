@@ -8,3 +8,4 @@ xformers==0.0.21
 scipy==1.11.2
 python-dotenv
 runpod==1.2.0
+einops==0.6.1
