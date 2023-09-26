@@ -30,6 +30,7 @@ class HfModel:
                 load_in_8bit=load_in_8bit,
                 device_map=self.device_map,
                 quantization_config=self.quantization_config,
+                trust_remote_code=True,
                 **kwargs,
             )
             self.tokenizer = AutoTokenizer.from_pretrained(
