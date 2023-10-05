@@ -27,22 +27,12 @@ class FinetunedModel:
         self, load_in_4bit: bool = False, load_in_8bit: bool = False
     ):
         try:
-            print(self.model_id.lower(), "model id")
-            if self.model_id.lower().find("mistral") != -1:
-                print('using AutoModelForCausalLM')
-                self.model = AutoModelForCausalLM.from_pretrained(
-                    self.model_id,
-                    load_in_4bit=load_in_4bit,
-                    load_in_8bit=load_in_8bit,
-                    device_map=self.device_map,
-                )
-            else:
-                self.model = AutoPeftModelForCausalLM.from_pretrained(
-                    self.model_id,
-                    load_in_4bit=load_in_4bit,
-                    load_in_8bit=load_in_8bit,
-                    device_map=self.device_map,
-                )
+            self.model = AutoPeftModelForCausalLM.from_pretrained(
+                self.model_id,
+                load_in_4bit=load_in_4bit,
+                load_in_8bit=load_in_8bit,
+                device_map=self.device_map,
+            )
             self.tokenizer = AutoTokenizer.from_pretrained(
                 self.model.peft_config["default"].base_model_name_or_path,
                 trust_remote_code=True,
