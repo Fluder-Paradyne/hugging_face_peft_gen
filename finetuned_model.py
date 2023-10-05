@@ -2,6 +2,7 @@ from peft import AutoPeftModelForCausalLM
 import torch
 from transformers import (
     AutoTokenizer,
+    AutoModelForCausalLM,
 )
 from typing import List, Union
 
@@ -26,12 +27,22 @@ class FinetunedModel:
         self, load_in_4bit: bool = False, load_in_8bit: bool = False
     ):
         try:
-            self.model = AutoPeftModelForCausalLM.from_pretrained(
-                self.model_id,
-                load_in_4bit=load_in_4bit,
-                load_in_8bit=load_in_8bit,
-                device_map=self.device_map,
-            )
+            if self.model_id.lower().find("mistral") != -1:
+                self.model = AutoPeftModelForCausalLM.from_pretrained(
+                    self.model_id,
+                    load_in_4bit=load_in_4bit,
+                    load_in_8bit=load_in_8bit,
+                    device_map=self.device_map,
+                    quantization_config=self.quantization_config,
+                    trust_remote_code=True,
+                )
+            else:
+                self.model = AutoPeftModelForCausalLM.from_pretrained(
+                    self.model_id,
+                    load_in_4bit=load_in_4bit,
+                    load_in_8bit=load_in_8bit,
+                    device_map=self.device_map,
+                )
             self.tokenizer = AutoTokenizer.from_pretrained(
                 self.model.peft_config["default"].base_model_name_or_path,
                 trust_remote_code=True,
