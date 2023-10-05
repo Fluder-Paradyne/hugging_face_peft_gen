@@ -34,8 +34,6 @@ class FinetunedModel:
                     load_in_4bit=load_in_4bit,
                     load_in_8bit=load_in_8bit,
                     device_map=self.device_map,
-                    quantization_config=self.quantization_config,
-                    trust_remote_code=True,
                 )
             else:
                 self.model = AutoPeftModelForCausalLM.from_pretrained(
