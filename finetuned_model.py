@@ -29,8 +29,8 @@ class FinetunedModel:
         try:
             print(self.model_id.lower(), "model id")
             if self.model_id.lower().find("mistral") != -1:
-                print('using AutoPeftModelForCausalLM')
-                self.model = AutoPeftModelForCausalLM.from_pretrained(
+                print('using AutoModelForCausalLM')
+                self.model = AutoModelForCausalLM.from_pretrained(
                     self.model_id,
                     load_in_4bit=load_in_4bit,
                     load_in_8bit=load_in_8bit,
