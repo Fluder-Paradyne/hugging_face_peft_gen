@@ -7,7 +7,8 @@ import json
 
 
 def handler(event):
-    input_payload = InputPayload(**event)
+    model_input = event["input"]
+    input_payload = InputPayload(**model_input)
     output = inference(input_payload)
     print(output, "output")
     return output
